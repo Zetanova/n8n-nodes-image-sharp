@@ -1,19 +1,21 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "n8n-nodes-image-sharp",
   "version": "0.1.0",
-  "description": "",
+  "description": "n8n node for image processing and optimization with sharp",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "image",
+    "optimization"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://zetanova.eu",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "Zetanova",
+    "email": "office@zetanova.eu"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/Zetanova/n8n-nodes-image-sharp.git"
   },
   "engines": {
     "node": ">=18.10",
@@ -35,16 +37,13 @@
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
-    ],
+    "credentials": [],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/ImageSharp/ImageSharp.node.js"
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.1.0",
     "@typescript-eslint/parser": "^7.15.0",
     "eslint": "^8.56.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.1",
@@ -55,5 +54,8 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "sharp": "^0.33.4"
   }
 }
