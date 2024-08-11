@@ -28,7 +28,7 @@ export const imageSharpOperations: INodeProperties[] = [
 				name: 'OPTIMIZE',
 				value: 'optimize',
 				description: 'Optimize and limit an image size',
-				action: 'optimize a image',
+				action: 'Optimize an image',
 			}
 		],
 		default: 'optimize',

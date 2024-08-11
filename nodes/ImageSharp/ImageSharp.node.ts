@@ -55,19 +55,19 @@ export class ImageSharp implements INodeType {
 				type: 'multiOptions',
 				options: [
 					{
-						name: 'png',
+						name: 'Png',
 						value: 'png',
 					},
 					{
-						name: 'jpeg',
+						name: 'Jpeg',
 						value: 'jpeg',
 					},
 					{
-						name: 'webp',
+						name: 'Webp',
 						value: 'webp',
 					},
 					{
-						name: 'avif',
+						name: 'Avif',
 						value: 'avif',
 					}
 				],
@@ -92,18 +92,18 @@ export class ImageSharp implements INodeType {
 				item = items[itemIndex]
 
 				if (!item.binary)
-					throw new Error(`input data required`)
+					throw new NodeOperationError(this.getNode(), `input data required`, { itemIndex })
 
 				const inputData = item.binary[binaryPropertyName]
 
 				if (inputData.fileType && inputData.fileType !== 'image')
-					throw new Error(`unsupported file type: ${inputData.fileType}`)
+					throw new NodeOperationError(this.getNode(), `unsupported file type: ${inputData.fileType}`, { itemIndex })
 
 				const input = await this.helpers.getBinaryDataBuffer(itemIndex, binaryPropertyName)
 
 				const formats = this.getNodeParameter('formats', itemIndex) as string[]
 
-				if(itemIndex === 0) {
+				if (itemIndex === 0) {
 					const nodeOutputs = this.getNodeOutputs()
 					returnData = new Array(nodeOutputs.length).fill(0).map(() => []);
 				}
@@ -129,11 +129,11 @@ export class ImageSharp implements INodeType {
 							pipe = pipe.avif(optimizeDefaults.avif)
 							break
 						default:
-							throw new Error(`unsupported image format '${format}'`)
+							throw new NodeOperationError(this.getNode(), `unsupported image format '${format}'`, { itemIndex })
 					}
 
 					const r = pipe.toBuffer({ resolveWithObject: true })
-						.then(n => { return { format, ...n }} )
+						.then(n => { return { format, ...n } })
 
 					imageOutputs.push(r)
 				}
@@ -144,8 +144,8 @@ export class ImageSharp implements INodeType {
 					//const outputIndex = formats.indexOf(imageOutput.format)
 					const outputIndex = 0
 
-					if(outputIndex < 0)
-						throw new Error(`output format '${imageOutput.format}' unknown`)
+					if (outputIndex < 0)
+						throw new NodeOperationError(this.getNode(), `output format '${imageOutput.format}' unknown`, { itemIndex })
 
 					let fileName = inputData.fileName
 					let ext = inputData.fileExtension
@@ -181,7 +181,7 @@ export class ImageSharp implements INodeType {
 						pairedItem: { item: itemIndex },
 						json: { ...imageOutput.info },
 						binary: {
-						   [binaryPropertyName]: binary
+							[binaryPropertyName]: binary
 						}
 					});
 				}
@@ -189,15 +189,10 @@ export class ImageSharp implements INodeType {
 			} catch (error) {
 				console.error(error)
 
-				// This node should never fail but we want to showcase how
-				// to handle errors.
 				if (this.continueOnFail()) {
-					returnData[0].push({ pairedItem: itemIndex , json: { error: error.message } });
+					returnData[0].push({ pairedItem: itemIndex, json: { error: error.message } });
 				} else {
-					// Adding `itemIndex` allows other workflows to handle this error
 					if (error.context) {
-						// If the error thrown already contains the context property,
-						// only append the itemIndex
 						error.context.itemIndex = itemIndex
 						throw error;
 					}
